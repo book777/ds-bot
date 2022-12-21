@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'help',
   aliases: ['h', 'cmd', 'command'],
   run: async (client, message, args) => {

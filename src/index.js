@@ -1,14 +1,14 @@
-const fs = require('fs')
+import fs from 'fs'
 
-const { DisTube } = require('distube')
-const Discord = require('discord.js')
-const { SpotifyPlugin } = require('@distube/spotify')
-const { SoundCloudPlugin } = require('@distube/soundcloud')
-const { YtDlpPlugin } = require('@distube/yt-dlp')
+import { DisTube } from 'distube'
+import Discord from 'discord.js'
+import { SpotifyPlugin } from '@distube/spotify'
+import { SoundCloudPlugin } from '@distube/soundcloud'
+import { YtDlpPlugin } from '@distube/yt-dlp'
 
-const config = require('./config.json')
-const nativeCommands = require('./hooks/native_commands')
-const playStatus = require('./util/play_status')
+import config from './config.js'
+import nativeCommands from './hooks/native_commands.js'
+import playStatus from './util/play_status.js'
 
 const client = new Discord.Client({
   intents: [
@@ -56,7 +56,7 @@ fs.readdir('./src/commands/', (err, files) => {
   if (jsFiles.length <= 0) return console.log('Could not find any commands!')
   jsFiles.forEach(file => {
     try {
-      const cmd = require(`./commands/${file}`)
+      const cmd = import(`./commands/${file}`)
       client.commands.set(cmd.name, cmd)
       if (cmd.aliases) cmd.aliases.forEach(alias => client.aliases.set(alias, cmd.name))
     } catch (err) {

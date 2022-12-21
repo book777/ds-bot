@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'rewind',
   inVoiceChannel: true,
   run: async (client, message, args) => {

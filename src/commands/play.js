@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'play',
   aliases: ['p'],
   inVoiceChannel: true,

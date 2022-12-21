@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'filter',
   aliases: ['filters'],
   inVoiceChannel: true,

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'nowplaying',
   aliases: ['np'],
   inVoiceChannel: true,

@@ -1,4 +1,4 @@
-const { RepeatMode } = require('distube')
+import { RepeatMode } from 'distube'
 
 const loop = repeatMode => {
   switch (repeatMode) {
@@ -18,4 +18,4 @@ const playStatus = queue =>
     queue.repeatMode
   )}\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\``
 
-module.exports = playStatus
+export default playStatus

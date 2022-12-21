@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'volume',
   aliases: ['v', 'set', 'set-volume'],
   inVoiceChannel: true,

@@ -1,5 +1,5 @@
-const Discord = require('discord.js')
-const config = require('../config.json')
+import Discord from 'discord.js'
+import config from '../config.js'
 
 const nativeCommands = async client => {
   const rest = new Discord.REST({ version: '10' }).setToken(config.token)
@@ -21,4 +21,4 @@ const nativeCommands = async client => {
   }
 }
 
-module.exports = nativeCommands
+export default nativeCommands

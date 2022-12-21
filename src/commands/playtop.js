@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'playtop',
   aliases: ['pt'],
   inVoiceChannel: true,

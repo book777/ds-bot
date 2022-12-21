@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'queue',
   aliases: ['q'],
   run: async (client, message) => {

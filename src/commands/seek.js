@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'seek',
   inVoiceChannel: true,
   run: async (client, message, args) => {

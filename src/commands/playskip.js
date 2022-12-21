@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'playskip',
   aliases: ['ps'],
   inVoiceChannel: true,

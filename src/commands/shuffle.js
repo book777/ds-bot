@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'shuffle',
   inVoiceChannel: true,
   run: async (client, message) => {
