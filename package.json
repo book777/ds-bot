@@ -2,29 +2,26 @@
   "name": "distube-example",
   "version": "1.0.1",
   "description": "DisTube example music bot.",
-  "main": "src/index.js",
-  "scripts": {
-    "start": "node src/index.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
-    "p": "prettier . --write",
-    "postinstall": "husky install",
-    "build": "rollup -c"
-  },
-  "type": "commonjs",
-  "_moduleAliases": {
-    "@src": "src"
+  "homepage": "https://github.com/distubejs/example#readme",
+  "bugs": {
+    "url": "https://github.com/distubejs/example/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/distubejs/example.git"
   },
-  "author": "Skick",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/distubejs/example/issues"
+  "author": "Skick",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "postinstall": "husky install",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "p": "prettier . --write",
+    "start": "node src/index.js"
   },
-  "homepage": "https://github.com/distubejs/example#readme",
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.14.0",
@@ -55,5 +52,8 @@
     "*.{json,yml,yaml,md}": [
       "prettier --write"
     ]
+  },
+  "_moduleAliases": {
+    "@src": "src"
   }
 }
