@@ -1,12 +1,14 @@
 const fs = require('fs')
 
-const { DisTube, RepeatMode } = require('distube')
+const { DisTube } = require('distube')
 const Discord = require('discord.js')
 const { SpotifyPlugin } = require('@distube/spotify')
 const { SoundCloudPlugin } = require('@distube/soundcloud')
 const { YtDlpPlugin } = require('@distube/yt-dlp')
 
 const config = require('./config.json')
+const nativeCommands = require('./hooks/native_commands')
+const playStatus = require('./util/play_status')
 
 const client = new Discord.Client({
   intents: [
@@ -19,10 +21,9 @@ const client = new Discord.Client({
     parse: ['roles', 'users', 'everyone']
   },
   ws: {
-    compress: true
+    compress: false // not working
   }
 })
-client.config = config
 client.distube = new DisTube(client, {
   leaveOnFinish: false,
   leaveOnStop: false,
@@ -43,6 +44,7 @@ client.distube = new DisTube(client, {
   },
   nsfw: true
 })
+client.config = config
 client.commands = new Discord.Collection()
 client.aliases = new Discord.Collection()
 client.emotes = config.emoji
@@ -67,6 +69,14 @@ client.on('ready', () => {
   console.log(`${client.user.tag} is ready to play music.`)
 })
 
+client.on('interactionCreate', async interaction => {
+  if (!interaction.isChatInputCommand()) return
+
+  if (interaction.commandName === 'ping') {
+    await interaction.reply('Pong!')
+  }
+})
+
 client.on('messageCreate', async message => {
   if (message.author.bot || !message.guild) return
   if (!message.content.startsWith(config.prefix)) return
@@ -81,37 +91,19 @@ client.on('messageCreate', async message => {
   }
 
   try {
-    cmd.run(client, message, args)
+    cmd.run(client, message, args)?.catch(err => console.error('Command error:', err.message))
   } catch (err) {
     console.error('Command error:', err.message)
     message.channel.send(`${client.emotes.error} | Error: \`${err}\``)
   }
 })
 
-const loop = repeatMode => {
-  switch (repeatMode) {
-    case RepeatMode.DISABLED:
-      return 'Off'
-    case RepeatMode.QUEUE:
-      return 'All Queue'
-    case RepeatMode.SONG:
-      return 'This Song'
-    default:
-      return 'unknown'
-  }
-}
-
-const status = queue =>
-  `Volume: \`${queue.volume}%\` | Filter: \`${queue.filters.names.join(', ') || 'Off'}\` | Loop: \`${loop(
-    queue.repeatMode
-  )}\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\``
-
 client.distube
   .on('playSong', (queue, song) =>
     queue.textChannel.send(
       `${client.emotes.play} | Playing \`${song.name}\` - \`${song.formattedDuration}\`\nRequested by: ${
         song.user
-      }\n${status(queue)}`
+      }\n${playStatus(queue)}`
     )
   )
   .on('addSong', (queue, song) =>
@@ -123,7 +115,7 @@ client.distube
     queue.textChannel.send(
       `${client.emotes.success} | Added \`${playlist.name}\` playlist (${
         playlist.songs.length
-      } songs) to queue\n${status(queue)}`
+      } songs) to queue\n${playStatus(queue)}`
     )
   )
   .on('error', (channel, e) => {
@@ -138,5 +130,9 @@ client.distube
 
 client
   .login(config.token)
-  .then(() => console.info('Bot is logged in'))
+  .then(async () => {
+    console.info('Bot is logged in')
+
+    await nativeCommands(client)
+  })
   .catch(err => console.error('Cannot log in bot:', err.message))

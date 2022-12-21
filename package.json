@@ -11,6 +11,7 @@
     "postinstall": "husky install",
     "build": "rollup -c"
   },
+  "type": "commonjs",
   "_moduleAliases": {
     "@src": "src"
   },
