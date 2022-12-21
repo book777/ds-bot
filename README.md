@@ -1,3 +1,10 @@
+## ToDo
+
+- default volume
+- save default channel
+- save queue
+- destroy temp mp3 files
+
 # DisTube Example
 
 DisTube.js.org example music bot with command handler
