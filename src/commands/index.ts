@@ -4,11 +4,12 @@ import forward from './forward'
 import help from './help'
 import join from './join'
 import leave from './leave'
-import nowplaying from './nowplaying'
+import nowPlaying from './now_playing'
 import pause from './pause'
 import play from './play'
-import playskip from './playskip'
-import playtop from './playtop'
+import playSkip from './play_skip'
+import playTop from './play_top'
+import previous from './previous'
 import queue from './queue'
 import repeat from './repeat'
 import resume from './resume'
@@ -16,9 +17,10 @@ import rewind from './rewind'
 import seek from './seek'
 import shuffle from './shuffle'
 import skip from './skip'
-import skipto from './skipto'
+import skipTo from './skip_to'
 import stop from './stop'
 import volume from './volume'
+
 import { Command } from '../types'
 
 const commands = [
@@ -28,11 +30,12 @@ const commands = [
   help,
   join,
   leave,
-  nowplaying,
+  nowPlaying,
   pause,
   play,
-  playskip,
-  playtop,
+  playSkip,
+  playTop,
+  previous,
   queue,
   repeat,
   resume,
@@ -40,7 +43,7 @@ const commands = [
   seek,
   shuffle,
   skip,
-  skipto,
+  skipTo,
   stop,
   volume
 ] as Command[]

@@ -7,8 +7,8 @@ export default {
   aliases: ['pt'],
   inVoiceChannel: true,
   run: async (client, message, args) => {
-    const string = args.join(' ')
-    if (!string) return message.channel.send(`${config.emoji.error} | Please enter a song url or query to search.`)
+    const urls = args.join(' ')
+    if (!urls) return message.channel.send(`${config.emoji.error} | Please enter a song url or query to search.`)
 
     const voiceChannel = message.member?.voice.channel
     if (!voiceChannel) {
@@ -16,7 +16,7 @@ export default {
       return
     }
 
-    await client.distube.play(message.member.voice.channel, string, {
+    await client.distube.play(message.member.voice.channel, urls, {
       member: message.member,
       textChannel: message.channel as GuildTextBasedChannel,
       message,
