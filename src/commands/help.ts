@@ -1,8 +1,9 @@
+import { Command } from '../types'
+
 export default {
   name: 'help',
   aliases: ['h', 'cmd', 'command'],
-  run: async (client, message, args) => {
-    console.debug('fff', { client, message, args })
+  run: async (client, message) => {
     message.channel.send({
       embeds: [
         await client
@@ -13,4 +14,4 @@ export default {
       ]
     })
   }
-}
+} as Command

@@ -1,11 +1,14 @@
+import config from '../config'
+import { Command } from '../types'
+
 export default {
   name: 'repeat',
   aliases: ['loop', 'rp'],
   inVoiceChannel: true,
   run: async (client, message, args) => {
     const queue = client.distube.getQueue(message)
-    if (!queue) return message.channel.send(`${client.emotes.error} | There is nothing playing!`)
-    let mode = null
+    if (!queue) return message.channel.send(`${config.emoji.error} | There is nothing playing!`)
+    let mode: number|string = 0
     switch (args[0]) {
       case 'off':
         mode = 0
@@ -19,6 +22,6 @@ export default {
     }
     mode = queue.setRepeatMode(mode)
     mode = mode ? (mode === 2 ? 'Repeat queue' : 'Repeat song') : 'Off'
-    message.channel.send(`${client.emotes.repeat} | Set repeat mode to \`${mode}\``)
+    message.channel.send(`${config.emoji.repeat} | Set repeat mode to \`${mode}\``)
   }
-}
+} as Command

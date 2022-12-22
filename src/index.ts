@@ -1,4 +1,3 @@
-import fs from 'fs'
 
 import { DisTube } from 'distube'
 import Discord from 'discord.js'
@@ -6,9 +5,11 @@ import { SpotifyPlugin } from '@distube/spotify'
 import { SoundCloudPlugin } from '@distube/soundcloud'
 import { YtDlpPlugin } from '@distube/yt-dlp'
 
-import config from './config.js'
-import nativeCommands from './hooks/native_commands.js'
-import playStatus from './util/play_status.js'
+import config from './config'
+import nativeCommands from './hooks/native_commands'
+import playStatus from './util/play_status'
+import { Client as ClientType } from './types'
+import commands from './commands'
 
 const client = new Discord.Client({
   intents: [
@@ -23,7 +24,8 @@ const client = new Discord.Client({
   ws: {
     compress: false // not working
   }
-})
+}) as ClientType
+
 client.distube = new DisTube(client, {
   leaveOnFinish: false,
   leaveOnStop: false,
@@ -44,29 +46,32 @@ client.distube = new DisTube(client, {
   },
   nsfw: true
 })
-client.config = config
 client.commands = new Discord.Collection()
 client.aliases = new Discord.Collection()
-client.emotes = config.emoji
 
-fs.readdir('./src/commands/', (err, files) => {
+/* fs.readdir('./src/commands/', (err, files) => {
   if (err) return console.error('Error when read commands folders: ', err.message)
 
   const jsFiles = files.filter(f => f.split('.').pop() === 'js')
   if (jsFiles.length <= 0) return console.log('Could not find any commands!')
   jsFiles.forEach(file => {
     try {
-      const cmd = import(`./commands/${file}`)
+      const cmd = import(`./commands/${file}`) as unknown as Command
       client.commands.set(cmd.name, cmd)
       if (cmd.aliases) cmd.aliases.forEach(alias => client.aliases.set(alias, cmd.name))
-    } catch (err) {
-      console.error(`Error when parse command ${file}: `, err.message)
+    } catch (error) {
+      if (error instanceof Error) { console.error(`Error when parse command ${file}: `, error.message) }
     }
   })
+}) */
+
+commands.forEach(cmd => {
+  client.commands.set(cmd.name, cmd)
+  if (cmd.aliases) cmd.aliases.forEach(alias => client.aliases.set(alias, cmd.name))
 })
 
 client.on('ready', () => {
-  console.log(`${client.user.tag} is ready to play music.`)
+  console.log(`${client.user?.tag} is ready to play music.`)
 })
 
 client.on('interactionCreate', async interaction => {
@@ -82,51 +87,56 @@ client.on('messageCreate', async message => {
   if (!message.content.startsWith(config.prefix)) return
 
   const args = message.content.slice(config.prefix.length).trim().split(/ +/g)
-  const command = args.shift().toLowerCase()
+  const command = args.shift()?.toLowerCase()
+  if (!command) return
 
-  const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command))
+  const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command) || '')
   if (!cmd) return
-  if (cmd.inVoiceChannel && !message.member.voice.channel) {
-    return message.channel.send(`${client.emotes.error} | You must be in a voice channel!`)
+  if (cmd.inVoiceChannel && !message.member?.voice.channel) {
+    message.channel.send(`${config.emoji.error} | You must be in a voice channel!`)
+    return
   }
 
   try {
-    cmd.run(client, message, args)?.catch(err => console.error('Command error:', err.message))
+    cmd.run(client, message, args).catch(err => console.error('Command error:', err.message))
   } catch (err) {
-    console.error('Command error:', err.message)
-    message.channel.send(`${client.emotes.error} | Error: \`${err}\``)
+    console.error('Command error:', err)
+    message.channel.send(`${config.emoji.error} | Error: \`${err}\``)
   }
 })
 
 client.distube
   .on('playSong', (queue, song) =>
-    queue.textChannel.send(
-      `${client.emotes.play} | Playing \`${song.name}\` - \`${song.formattedDuration}\`\nRequested by: ${
+    queue?.textChannel?.send(
+      `${config.emoji.play} | Playing \`${song.name}\` - \`${song.formattedDuration}\`\nRequested by: ${
         song.user
       }\n${playStatus(queue)}`
     )
   )
   .on('addSong', (queue, song) =>
-    queue.textChannel.send(
-      `${client.emotes.success} | Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user}`
+    queue.textChannel?.send(
+      `${config.emoji.success} | Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user}`
     )
   )
   .on('addList', (queue, playlist) =>
-    queue.textChannel.send(
-      `${client.emotes.success} | Added \`${playlist.name}\` playlist (${
+    queue.textChannel?.send(
+      `${config.emoji.success} | Added \`${playlist.name}\` playlist (${
         playlist.songs.length
       } songs) to queue\n${playStatus(queue)}`
     )
   )
   .on('error', (channel, e) => {
-    if (channel) channel.send(`${client.emotes.error} | An error encountered: ${e.toString().slice(0, 1974)}`)
+    if (channel) channel.send(`${config.emoji.error} | An error encountered: ${e.toString().slice(0, 1974)}`)
     console.error(e)
   })
-  .on('empty', channel => channel.send('Voice channel is empty! Leaving the channel...'))
+  .on('empty', async (channel) => {
+    await channel.stop()
+    console.log('Voice channel is empty! Leaving the channel...')
+  })
   .on('searchNoResult', (message, query) =>
-    message.channel.send(`${client.emotes.error} | No result found for \`${query}\`!`)
+    message.channel.send(`${config.emoji.error} | No result found for \`${query}\`!`)
   )
-  .on('finish', queue => queue.textChannel.send('Finished!'))
+  .on('finish', queue => queue.textChannel?.send('Finished!'))
 
 client
   .login(config.token)

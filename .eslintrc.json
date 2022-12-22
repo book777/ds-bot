@@ -1,7 +1,15 @@
 {
-  "extends": "standard",
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "standard",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "parserOptions": {
-    "ecmaVersion": 11,
+    "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "env": {

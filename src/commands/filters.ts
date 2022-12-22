@@ -1,3 +1,6 @@
+import config from '../config'
+import { Command } from '../types'
+
 export default {
   name: 'filter',
   aliases: ['filters'],
@@ -5,7 +8,7 @@ export default {
   run: async (client, message, args) => {
     const queue = client.distube.getQueue(message)
     if (!queue) {
-      return message.channel.send(`${client.emotes.error} | There is nothing in the queue right now!`)
+      return message.channel.send(`${config.emoji.error} | There is nothing in the queue right now!`)
     }
     const filter = args[0]
     if (filter === 'off' && queue.filters.size) {
@@ -19,12 +22,12 @@ export default {
         }
       } else {
         if (args[0]) {
-          return message.channel.send(`${client.emotes.error} | Not a valid filter`)
+          return message.channel.send(`${config.emoji.error} | Not a valid filter`)
         } else {
-          return message.channel.send(`${client.emotes.error} | Not a valid filter2`)
+          return message.channel.send(`${config.emoji.error} | Not a valid filter2`)
         }
       }
     }
     message.channel.send(`Current Queue Filter: \`${queue.filters.names.join(', ') || 'Off'}\``)
   }
-}
+} as Command

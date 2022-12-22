@@ -1,15 +1,18 @@
+import config from '../config'
+import { Command } from '../types'
+
 export default {
-  name: 'playtop',
-  aliases: ['pt'],
+  name: 'playskip',
+  aliases: ['ps'],
   inVoiceChannel: true,
   run: async (client, message, args) => {
     const string = args.join(' ')
-    if (!string) return message.channel.send(`${client.emotes.error} | Please enter a song url or query to search.`)
+    if (!string) return message.channel.send(`${config.emoji.error} | Please enter a song url or query to search.`)
     client.distube.play(message.member.voice.channel, string, {
       member: message.member,
       textChannel: message.channel,
       message,
-      position: 1
+      skip: true
     })
   }
-}
+} as Command

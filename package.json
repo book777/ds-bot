@@ -13,14 +13,13 @@
   "license": "MIT",
   "author": "Skick",
   "type": "module",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "build": "rollup -c",
     "postinstall": "husky install",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "p": "prettier . --write",
-    "start": "node src/index.js"
+    "start": "tsx src/index.ts"
   },
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
@@ -32,10 +31,14 @@
     "distube": "^4.0.4",
     "eslint-config-prettier": "^8.5.0",
     "ffmpeg-static": "^5.1.0",
-    "libsodium-wrappers": "^0.7.10"
+    "libsodium-wrappers": "^0.7.10",
+    "tsx": "^3.12.1",
+    "typescript": "^4.9.4"
   },
   "devDependencies": {
-    "eslint": "^8.20.0",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
+    "eslint": "^8.30.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",

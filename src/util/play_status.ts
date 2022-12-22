@@ -1,6 +1,6 @@
-import { RepeatMode } from 'distube'
+import { Queue, RepeatMode } from 'distube'
 
-const loop = repeatMode => {
+const loop = (repeatMode: RepeatMode) => {
   switch (repeatMode) {
     case RepeatMode.DISABLED:
       return 'Off'
@@ -13,7 +13,7 @@ const loop = repeatMode => {
   }
 }
 
-const playStatus = queue =>
+const playStatus = (queue: Queue) =>
   `Volume: \`${queue.volume}%\` | Filter: \`${queue.filters.names.join(', ') || 'Off'}\` | Loop: \`${loop(
     queue.repeatMode
   )}\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\``
