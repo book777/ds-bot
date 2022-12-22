@@ -49,22 +49,6 @@ client.distube = new DisTube(client, {
 client.commands = new Discord.Collection()
 client.aliases = new Discord.Collection()
 
-/* fs.readdir('./src/commands/', (err, files) => {
-  if (err) return console.error('Error when read commands folders: ', err.message)
-
-  const jsFiles = files.filter(f => f.split('.').pop() === 'js')
-  if (jsFiles.length <= 0) return console.log('Could not find any commands!')
-  jsFiles.forEach(file => {
-    try {
-      const cmd = import(`./commands/${file}`) as unknown as Command
-      client.commands.set(cmd.name, cmd)
-      if (cmd.aliases) cmd.aliases.forEach(alias => client.aliases.set(alias, cmd.name))
-    } catch (error) {
-      if (error instanceof Error) { console.error(`Error when parse command ${file}: `, error.message) }
-    }
-  })
-}) */
-
 commands.forEach(cmd => {
   client.commands.set(cmd.name, cmd)
   if (cmd.aliases) cmd.aliases.forEach(alias => client.aliases.set(alias, cmd.name))
@@ -76,6 +60,10 @@ client.on('ready', () => {
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return
+
+  /* const inter: Discord.ChatInputCommandInteraction = interaction
+  const command: Command = null;
+  command.run(inter.client, awaitModalSubmit) */
 
   if (interaction.commandName === 'ping') {
     await interaction.reply('Pong!')
