@@ -1,6 +1,7 @@
 import config from '../config'
 import { Command } from '../types'
 import { GuildTextBasedChannel } from 'discord.js'
+import { removeSimilarSongs } from '../util/remove_similar_songs'
 
 export default {
   name: 'playtop',
@@ -22,5 +23,6 @@ export default {
       message,
       position: 1
     })
+    removeSimilarSongs()
   }
 } as Command

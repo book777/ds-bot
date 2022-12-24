@@ -7,7 +7,10 @@ export default {
   inVoiceChannel: true,
   run: async (client, message) => {
     const queue = client.distube.getQueue(message)
-    if (!queue) return message.channel.send(`${config.emoji.error} | There is nothing in the queue right now!`)
+    if (!queue) {
+      return message.channel.send(`${config.emoji.error} | There is nothing in the queue right now!`)
+    }
+
     await queue.stop()
     message.channel.send(`${config.emoji.success} | Stopped!`)
   }

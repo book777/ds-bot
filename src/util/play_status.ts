@@ -18,4 +18,4 @@ const playStatus = (queue: Queue) =>
     queue.repeatMode
   )}\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\``
 
-export default playStatus
+export { playStatus }

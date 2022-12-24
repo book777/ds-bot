@@ -1,4 +1,3 @@
-
 import { DisTube } from 'distube'
 import Discord from 'discord.js'
 import { SpotifyPlugin } from '@distube/spotify'
@@ -6,10 +5,11 @@ import { SoundCloudPlugin } from '@distube/soundcloud'
 import { YtDlpPlugin } from '@distube/yt-dlp'
 
 import config from './config'
-import nativeCommands from './hooks/native_commands'
-import playStatus from './util/play_status'
+import { nativeCommandReg } from './ds_interactions/native_command_reg'
+import { playStatus } from './util/play_status'
 import { Client as ClientType } from './types'
-import commands from './commands'
+import { commands } from './commands'
+import { nativeCommandParse } from './ds_interactions/native_command_parse'
 
 const client = new Discord.Client({
   intents: [
@@ -25,8 +25,10 @@ const client = new Discord.Client({
     compress: false // not working
   }
 }) as ClientType
+client.commands = new Discord.Collection()
+client.aliases = new Discord.Collection()
 
-client.distube = new DisTube(client, {
+const distube = new DisTube(client, {
   leaveOnFinish: false,
   leaveOnStop: false,
   leaveOnEmpty: false,
@@ -46,55 +48,9 @@ client.distube = new DisTube(client, {
   },
   nsfw: true
 })
-client.commands = new Discord.Collection()
-client.aliases = new Discord.Collection()
-
-commands.forEach(cmd => {
-  client.commands.set(cmd.name, cmd)
-  if (cmd.aliases) cmd.aliases.forEach(alias => client.aliases.set(alias, cmd.name))
-})
-
-client.on('ready', () => {
-  console.log(`${client.user?.tag} is ready to play music.`)
-})
-
-client.on('interactionCreate', async interaction => {
-  if (!interaction.isChatInputCommand()) return
-
-  /* const inter: Discord.ChatInputCommandInteraction = interaction
-  const command: Command = null;
-  command.run(inter.client, awaitModalSubmit) */
-
-  if (interaction.commandName === 'ping') {
-    await interaction.reply('Pong!')
-  }
-})
-
-client.on('messageCreate', async message => {
-  if (message.author.bot || !message.guild) return
-  if (!message.content.startsWith(config.prefix)) return
-
-  const args = message.content.slice(config.prefix.length).trim().split(/ +/g)
-  const command = args.shift()?.toLowerCase()
-  if (!command) return
-
-  const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command) || '')
-  if (!cmd) return
-  if (cmd.inVoiceChannel && !message.member?.voice.channel) {
-    message.channel.send(`${config.emoji.error} | You must be in a voice channel!`)
-    return
-  }
-
-  try {
-    cmd.run(client, message, args).catch(err => console.error('Command error:', err.message))
-  } catch (err) {
-    console.error('Command error:', err)
-    message.channel.send(`${config.emoji.error} | Error: \`${err}\``)
-  }
-})
-
-client.distube
+distube
   .on('playSong', (queue, song) =>
+    // todo add silent option
     queue?.textChannel?.send(
       `${config.emoji.play} | Playing \`${song.name}\` - \`${song.formattedDuration}\`\nRequested by: ${
         song.user
@@ -126,11 +82,70 @@ client.distube
   )
   .on('finish', queue => queue.textChannel?.send('Finished!'))
 
+client.distube = distube
+
+commands.forEach(cmd => {
+  client.commands.set(cmd.name, cmd)
+  if (cmd.aliases) cmd.aliases.forEach(alias => client.aliases.set(alias, cmd.name))
+})
+
+client
+  .on('ready', () => {
+    console.log(`${client.user?.tag} is ready to play music.`)
+  })
+  .on('interactionCreate', interaction => nativeCommandParse(client, interaction))
+  .on('messageCreate', async message => {
+    if (message.author.bot || !message.guild) return
+    if (!message.content.startsWith(config.prefix)) return
+
+    const args = message.content.slice(config.prefix.length).trim().split(/ +/g)
+    const command = args.shift()?.toLowerCase()
+    if (!command) return
+
+    const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command) || '')
+    if (!cmd) return
+    if (cmd.inVoiceChannel && !message.member?.voice.channel) {
+      message.channel.send(`${config.emoji.error} | You must be in a voice channel!`)
+      return
+    }
+
+    cmd.run(client, message, args).catch((err) => {
+      console.error('Command error:', err)
+      message.channel.send(`${config.emoji.error} | Error: \`${err}\``)
+    })
+  })
+  .on('voiceStateUpdate', async (_oldState, newState) => {
+    // Bot not in voice
+    if (client.voice.adapters.size === 0) return
+    const queue = client.distube.getQueue(newState.guild.id)
+    if (!queue) return
+
+    const canHearUsersOnVoiceChannelWithBot = newState.guild.members.cache
+      .filter(member =>
+        !member.user.bot &&
+        !member.voice.deaf &&
+        !member.voice.serverDeaf &&
+        member.voice.channelId &&
+        member.voice.channelId === queue.voice.channelId
+      ).size
+
+    if (queue.paused) {
+      if (canHearUsersOnVoiceChannelWithBot !== 0) {
+        queue.resume()
+        // console.log(`Resume music on server ${queue.id}`)
+      }
+    } else {
+      if (canHearUsersOnVoiceChannelWithBot === 0) {
+        queue.pause() // todo promise
+        // console.log(`Pause on server ${queue.id}`)
+      }
+    }
+  })
+
 client
   .login(config.token)
   .then(async () => {
     console.info('Bot is logged in')
-
-    await nativeCommands(client)
+    nativeCommandReg(client)
   })
   .catch(err => console.error('Cannot log in bot:', err.message))

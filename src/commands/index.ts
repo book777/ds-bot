@@ -48,4 +48,4 @@ const commands = [
   volume
 ] as Command[]
 
-export default commands
+export { commands }
