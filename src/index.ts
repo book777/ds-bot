@@ -52,9 +52,15 @@ distube
   .on('playSong', (queue, song) =>
     // todo add silent option
     queue?.textChannel?.send(
-      `${config.emoji.play} | Playing \`${song.name}\` - \`${song.formattedDuration}\`\nRequested by: ${
-        song.user
-      }\n${playStatus(queue)}`
+      {
+        content: `${config.emoji.play} | Play now\n${playStatus(queue)}`,
+        embeds: [{
+          title: song.name,
+          url: song.url,
+          color: 15548997, // Red from https://gist.github.com/thomasbnt/b6f455e2c7d743b796917fa3c205f812s
+          description: `Duration ${song.formattedDuration}\nRequested by: ${song.user}`
+        }]
+      }
     )
   )
   .on('addSong', (queue, song) =>

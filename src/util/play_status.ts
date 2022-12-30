@@ -14,8 +14,6 @@ const loop = (repeatMode: RepeatMode) => {
 }
 
 const playStatus = (queue: Queue) =>
-  `Volume: \`${queue.volume}%\` | Filter: \`${queue.filters.names.join(', ') || 'Off'}\` | Loop: \`${loop(
-    queue.repeatMode
-  )}\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\``
+  `Volume: \`${queue.volume}%\` | Loop: \`${loop(queue.repeatMode)}\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\` | Filter: \`${queue.filters.names.join(', ') || 'Off'}\``
 
 export { playStatus }

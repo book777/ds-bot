@@ -3,7 +3,7 @@ import { Command } from '../types'
 
 export default {
   name: 'stop',
-  aliases: ['disconnect', 'leave'],
+  aliases: ['disconnect', 'leave', 'st'],
   inVoiceChannel: true,
   run: async (client, message) => {
     const queue = client.distube.getQueue(message)
