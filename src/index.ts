@@ -33,6 +33,7 @@ const distube = new DisTube(client, {
   leaveOnStop: false,
   leaveOnEmpty: false,
   emitNewSongOnly: true,
+  savePreviousSongs: true,
   emitAddSongWhenCreatingQueue: false,
   emitAddListWhenCreatingQueue: false,
   plugins: [
@@ -149,9 +150,9 @@ client
   })
 
 client
-  .login(config.token)
+  .login(process.env.DC_TOKEN || config.token)
   .then(async () => {
     console.info('Bot is logged in')
     nativeCommandReg(client)
   })
-  .catch(err => console.error('Cannot log in bot:', err.message))
+  .catch(err => console.error('Bot cannot log in:', err))

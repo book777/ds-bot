@@ -9,7 +9,7 @@ const nativeCommandReg = (client: Client) => {
       ...command.register
     }))
   }).then(() => {
-    console.log('App native commands updated successfully')
+    console.log('App native commands are updated successfully')
   }).catch(err => {
     console.log('Cannot update app native commands:', err)
   })

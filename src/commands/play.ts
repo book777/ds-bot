@@ -23,16 +23,14 @@ export default {
     const hasQueue = !!client.distube.getQueue(message)
 
     await client.distube.play(voiceChannel, string, {
-      // ./node_modules/distube/dist/index.js:2234
       member: message.member,
       textChannel: message.channel as GuildTextBasedChannel,
-      message
+      message,
+      volume: config.volume.default
     }).then(() => {
       if (!hasQueue) {
         const queue = client.distube.getQueue(message)
-        queue?.setVolume(config.volume.default)
         queue?.setRepeatMode(config.repeat.default)
-        // todo set before "on distube playSong"
       }
     })
 
