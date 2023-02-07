@@ -1,8 +1,8 @@
-import { Command } from '../types'
+import { Command } from "../types";
 
 export default {
-  name: 'leave',
+  name: "leave",
   run: async (client, message) => {
-    client.distube.voices.leave(message)
+    client.distube.voices.leave(message);
   }
-} as Command
+} as Command;

@@ -1,9 +1,11 @@
-import Discord from 'discord.js'
-import { DisTube } from 'distube'
+import Discord from "discord.js";
+import { DisTube } from "distube";
+import { firestore } from "firebase-admin";
+import Firestore = firestore.Firestore;
 
 export type MessageCommon = {
-  send: (message: string) => Promise<void>
-}
+  send: (message: string) => Promise<void>;
+};
 
 export type Command = {
   name: string;
@@ -22,12 +24,13 @@ export type Command = {
       description?: string; // max 100
       min_value?: number;
       max_value?: number;
-    }[]
-  },
-}
+    }[];
+  };
+};
 
 export interface Client extends Discord.Client {
   distube: DisTube;
   commands: Discord.Collection<string, Command>;
   aliases: Discord.Collection<string, string>;
+  firestore?: Firestore;
 }

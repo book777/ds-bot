@@ -1,18 +1,18 @@
-import config from '../config'
-import { Command } from '../types'
+import config from "../config";
+import { Command } from "../types";
 
 export default {
-  name: 'forward',
+  name: "forward",
   inVoiceChannel: true,
   run: async (client, message, args) => {
-    const queue = client.distube.getQueue(message)
-    if (!queue) return message.channel.send(`${config.emoji.error} | There is nothing in the queue right now!`)
+    const queue = client.distube.getQueue(message);
+    if (!queue) return message.channel.send(`${config.emoji.error} | There is nothing in the queue right now!`);
     if (!args[0]) {
-      return message.channel.send(`${config.emoji.error} | Please provide time (in seconds) to go forward!`)
+      return message.channel.send(`${config.emoji.error} | Please provide time (in seconds) to go forward!`);
     }
-    const time = Number(args[0])
-    if (isNaN(time)) return message.channel.send(`${config.emoji.error} | Please enter a valid number!`)
-    queue.seek(queue.currentTime + time)
-    message.channel.send(`Forwarded the song for ${time}!`)
+    const time = Number(args[0]);
+    if (isNaN(time)) return message.channel.send(`${config.emoji.error} | Please enter a valid number!`);
+    queue.seek(queue.currentTime + time);
+    message.channel.send(`Forwarded the song for ${time}!`);
   }
-} as Command
+} as Command;

@@ -107,6 +107,7 @@ dist
 .pnp.*
 .yarn/
 
-
 #IDE
 .idea
+
+firebase_configs

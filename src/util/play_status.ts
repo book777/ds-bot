@@ -1,19 +1,21 @@
-import { Queue, RepeatMode } from 'distube'
+import { Queue, RepeatMode } from "distube";
 
 const loop = (repeatMode: RepeatMode) => {
   switch (repeatMode) {
     case RepeatMode.DISABLED:
-      return 'Off'
+      return "Off";
     case RepeatMode.QUEUE:
-      return 'All Queue'
+      return "All Queue";
     case RepeatMode.SONG:
-      return 'This Song'
+      return "This Song";
     default:
-      return 'unknown'
+      return "unknown";
   }
-}
+};
 
 const playStatus = (queue: Queue) =>
-  `Volume: \`${queue.volume}%\` | Loop: \`${loop(queue.repeatMode)}\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\` | Filter: \`${queue.filters.names.join(', ') || 'Off'}\``
+  `Volume: \`${queue.volume}%\` | Loop: \`${loop(queue.repeatMode)}\` | Autoplay: \`${
+    queue.autoplay ? "On" : "Off"
+  }\` | Filter: \`${queue.filters.names.join(", ") || "Off"}\``;
 
-export { playStatus }
+export { playStatus };
